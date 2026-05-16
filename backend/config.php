@@ -1,16 +1,27 @@
 <?php
 
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'academic_events');
-define('DB_USER', 'root');
-define('DB_PASS', 'salah123');
-define('DB_CHARSET', 'utf8mb4');
+// Load .env file from the same directory
+$env_file = __DIR__ . '/.env';
+if (file_exists($env_file)) {
+    $lines = file($env_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (str_starts_with(trim($line), '#') || !str_contains($line, '=')) continue;
+        [$key, $value] = explode('=', $line, 2);
+        $_ENV[trim($key)] = trim($value);
+    }
+}
+
+define('DB_HOST',    $_ENV['DB_HOST']    ?? 'localhost');
+define('DB_NAME',    $_ENV['DB_NAME']    ?? 'academic_events');
+define('DB_USER',    $_ENV['DB_USER']    ?? 'root');
+define('DB_PASS',    $_ENV['DB_PASS']    ?? '');
+define('DB_CHARSET', $_ENV['DB_CHARSET'] ?? 'utf8mb4');
 
 function get_db() {
     static $pdo = null;
 
     if ($pdo === null) {
-        $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=' . DB_CHARSET;
+        $dsn     = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=' . DB_CHARSET;
         $options = [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
