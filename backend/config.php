@@ -1,6 +1,6 @@
 <?php
 
-// Load .env file from the same directory (optional)
+
 $env_file = __DIR__ . '/.env';
 if (file_exists($env_file)) {
     $lines = file($env_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -39,8 +39,7 @@ function get_db() {
     return $pdo;
 }
 
-// ---- Session setup (ensure consistent session storage and cookie params) ----
-// Determine a writable session save path and set it so all scripts use the same location.
+
 $currentSave = ini_get('session.save_path');
 if ($currentSave) {
     if (strpos($currentSave, ';') !== false) {

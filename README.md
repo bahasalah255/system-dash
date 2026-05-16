@@ -83,7 +83,7 @@ Add to your hosts file (`/etc/hosts` on Linux/Mac, `C:\Windows\System32\drivers\
 ### 4. Open in browser
 
 ```
-http://system-dash.local/frontend/pages/login.html
+http://system-dash.local/login.php
 ```
 
 ---
@@ -93,10 +93,8 @@ http://system-dash.local/frontend/pages/login.html
 ```
 backend/        PHP API endpoints + config
 database/       SQL schema and seed data
-frontend/       HTML pages, CSS, JS
-  pages/        dashboard-student.html, dashboard-manager.html, login.html ...
-  css/          styles.css
-  js/           page scripts
+frontend/       HTML dashboard pages
+  pages/        dashboard-student.html, dashboard-manager.html
 docs/           site map and report template
 tests/          manual test checklist
 ```

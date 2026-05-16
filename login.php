@@ -6,7 +6,8 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (isset($_SESSION['user_id'])) {
-    header('Location: frontend/pages/dashboard-' . $_SESSION['user_role'] . '.html');
+    $target = ($_SESSION['user_role'] === 'manager') ? 'dashboard.php' : 'events.php';
+    header('Location: ' . $target);
     exit;
 }
 
@@ -36,7 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_role']  = $user['role'];
             $_SESSION['user_name']  = $user['full_name'];
 
-            header('Location: frontend/pages/dashboard-' . $user['role'] . '.html');
+            $target = ($user['role'] === 'manager') ? 'dashboard.php' : 'events.php';
+            header('Location: ' . $target);
             exit;
         }
     }
@@ -200,7 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 
     <div class="footer-links">
-        <a href="reset-password.php">Forgot password?</a>
+        <a href="reset_password.php">Forgot password?</a>
         <a href="register.php">Create an account</a>
     </div>
 

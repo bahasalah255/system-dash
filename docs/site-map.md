@@ -1,15 +1,30 @@
 # Site Map
 
-- Home (`frontend/index.html`)
-- Registration (`frontend/pages/register.html`)
-- Login (`frontend/pages/login.html`)
-- Reset Password (`frontend/pages/reset-password.html`)
-- Events Listing (`frontend/pages/events-list.html`)
-- Add Event (`frontend/pages/events-add.html`)
+## Public Pages
+- `index.php` - Landing page
+- `login.php` - Login
+- `register.php` - Register
+- `reset_password.php` - Reset password
 
-## API Endpoints
-- `POST /api/auth/register`
-- `POST /api/auth/login`
-- `POST /api/auth/reset-password`
-- `GET /api/events`
-- `POST /api/events`
+## Student Pages
+- `events.php` - View all events
+- `profile.php` - My profile
+
+## Manager Pages
+- `dashboard.php` - Overview
+- `events_list.php` - Manage events
+- `add_event.php` - Add new event
+- `edit_event.php` - Edit event
+- `students.php` - View registered students
+
+## Backend Endpoints
+- `backend/login.php`
+- `backend/register.php`
+- `backend/reset_password.php`
+- `backend/events.php`
+- `backend/users.php`
+- `backend/me.php`
+- `backend/stats.php`
+- `backend/update_name.php`
+- `backend/update_email.php`
+- `backend/update_password.php`

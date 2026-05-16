@@ -851,6 +851,11 @@
 
     <script>
       const BASE = '../../backend';
+      const ROUTE_PARAMS = new URLSearchParams(window.location.search);
+      const START_SECTION = ROUTE_PARAMS.get('section') || 'overview';
+      let START_EVENT_MODE = ROUTE_PARAMS.get('mode') || '';
+      let START_EVENT_ID   = ROUTE_PARAMS.get('id') || '';
+      let eventsCache = [];
 
       // ---- Helpers ----
 
@@ -1065,6 +1070,8 @@
         const tbody = document.getElementById('events-tbody');
         tbody.innerHTML = '';
 
+        eventsCache = data.success && data.data && Array.isArray(data.data.events) ? data.data.events : [];
+
         if (!data.success || !data.data.events.length) {
           tbody.appendChild(emptyRow(4, 'No events found.')); return;
         }
@@ -1095,6 +1102,21 @@
           tr.appendChild(actionTd);
           tbody.appendChild(tr);
         });
+
+        if (START_EVENT_MODE === 'add') {
+          START_EVENT_MODE = '';
+          START_EVENT_ID = '';
+          evOpenAdd();
+        } else if (START_EVENT_MODE === 'edit') {
+          const target = START_EVENT_ID
+            ? eventsCache.find(ev => String(ev.id) === String(START_EVENT_ID))
+            : null;
+          START_EVENT_MODE = '';
+          START_EVENT_ID = '';
+          if (target) {
+            evOpenEdit(target);
+          }
+        }
       }
 
       // ---- Students ----
@@ -1334,7 +1356,7 @@
         document.getElementById('topbar-date').textContent =
           now.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
 
-        loadOverview();
+        showSection(START_SECTION);
       })();
     </script>
   </body>

@@ -6,7 +6,8 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (isset($_SESSION['user_id'])) {
-    header('Location: frontend/pages/dashboard-' . $_SESSION['user_role'] . '.html');
+    $target = ($_SESSION['user_role'] === 'manager') ? 'dashboard.php' : 'events.php';
+    header('Location: ' . $target);
     exit;
 }
 

@@ -1,5 +1,5 @@
 <?php
-// Session params must be set before session_start() — config.php handles that
+
 require_once 'backend/config.php';
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -9,7 +9,6 @@ if (session_status() === PHP_SESSION_NONE) {
 $is_logged_in = isset($_SESSION['user_id']);
 $user_role    = $_SESSION['user_role'] ?? null;
 
-// Fetch 3 nearest upcoming events — graceful fail if DB is down
 $events = [];
 try {
     $dsn  = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=' . DB_CHARSET;
@@ -28,7 +27,6 @@ try {
     $stmt->execute();
     $events = $stmt->fetchAll();
 } catch (Exception $e) {
-    // DB unavailable — events section will show fallback message
 }
 ?>
 <!DOCTYPE html>
@@ -567,10 +565,10 @@ try {
         <a href="index.php" class="nav-brand">Academic<span>Events</span></a>
         <ul class="nav-links">
             <?php if ($is_logged_in && $user_role === 'student'): ?>
-                <li><a href="frontend/pages/dashboard-student.html">Dashboard</a></li>
+                <li><a href="events.php">Dashboard</a></li>
                 <li><a href="backend/logout.php" class="btn-nav">Logout</a></li>
             <?php elseif ($is_logged_in && $user_role === 'manager'): ?>
-                <li><a href="frontend/pages/dashboard-manager.html">Dashboard</a></li>
+                <li><a href="dashboard.php">Dashboard</a></li>
                 <li><a href="backend/logout.php" class="btn-nav">Logout</a></li>
             <?php else: ?>
                 <li><a href="index.php">Home</a></li>
@@ -590,7 +588,7 @@ try {
         <h1>Discover Academic Events</h1>
         <p>Stay informed about workshops, seminars and conferences at your university. All in one place.</p>
         <div class="hero-actions">
-            <a href="login.php" class="btn-primary">View Events</a>
+            <a href="events.php" class="btn-primary">View Events</a>
             <a href="register.php" class="btn-outline">Create an Account</a>
         </div>
     </div>
@@ -771,10 +769,10 @@ try {
 
             <ul class="footer-links">
                 <?php if ($is_logged_in && $user_role === 'student'): ?>
-                    <li><a href="frontend/pages/dashboard-student.html">Dashboard</a></li>
+                    <li><a href="events.php">Dashboard</a></li>
                     <li><a href="backend/logout.php">Logout</a></li>
                 <?php elseif ($is_logged_in && $user_role === 'manager'): ?>
-                    <li><a href="frontend/pages/dashboard-manager.html">Dashboard</a></li>
+                    <li><a href="dashboard.php">Dashboard</a></li>
                     <li><a href="backend/logout.php">Logout</a></li>
                 <?php else: ?>
                     <li><a href="index.php">Home</a></li>

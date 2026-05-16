@@ -710,6 +710,7 @@
 
     <script>
       const BASE = '../../backend';
+      const START_SECTION = new URLSearchParams(window.location.search).get('section') || 'events';
 
       async function get(path) {
         const res = await fetch(BASE + path, { credentials: 'include' });
@@ -830,6 +831,7 @@
         document.getElementById('topbar-date').textContent =
           now.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
 
+        showSection(START_SECTION);
         loadEvents();
       })();
 
