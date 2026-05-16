@@ -3,107 +3,165 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Manager Dashboard</title>
+    <title>Manager dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
+      /* ============================================================
+         TOKENS
+      ============================================================ */
+      :root {
+        --color-bg:            #f5f5f4;
+        --color-surface:       #ffffff;
+        --color-border:        rgba(0, 0, 0, 0.08);
+        --color-border-strong: rgba(0, 0, 0, 0.14);
+        --color-text:          #1a1a1a;
+        --color-text-muted:    #6b7280;
+        --color-text-hint:     #9ca3af;
+        --color-accent:        #0f766e;
+        --color-accent-light:  #f0fdfa;
+        --sidebar-w:           200px;
+      }
+
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
       body {
-        font-family: "Segoe UI", system-ui, sans-serif;
+        font-family: system-ui, -apple-system, sans-serif;
         font-size: 14px;
-        color: #1a1a1a;
-        background: #f0f0ef;
+        line-height: 1.6;
+        color: var(--color-text);
+        background: var(--color-bg);
         display: flex;
         min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
       }
 
-      /* ---- Sidebar ---- */
+      /* ============================================================
+         SIDEBAR
+      ============================================================ */
       .sidebar {
-        width: 210px;
-        background: #fff;
-        border-right: 1px solid #d4d4d4;
+        width: var(--sidebar-w);
+        background: var(--color-surface);
+        border-right: 0.5px solid var(--color-border-strong);
         display: flex;
         flex-direction: column;
         position: fixed;
         top: 0; left: 0;
         height: 100vh;
-        z-index: 10;
+        z-index: 20;
       }
 
       .sidebar-brand {
-        padding: 18px 16px 14px;
-        border-bottom: 1px solid #e8e8e8;
+        padding: 16px 14px;
+        border-bottom: 0.5px solid var(--color-border);
       }
 
-      .sidebar-brand strong {
+      .brand-name {
         display: block;
-        font-size: 15px;
-        font-weight: 700;
-        color: #0f766e;
-        letter-spacing: -0.2px;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--color-text);
+        letter-spacing: -0.1px;
       }
 
-      .sidebar-brand span {
+      .brand-sub {
+        display: block;
         font-size: 11.5px;
-        color: #888;
+        color: var(--color-text-hint);
         margin-top: 1px;
-        display: block;
       }
 
       .sidebar-nav {
         flex: 1;
         padding: 10px 0;
+        overflow-y: auto;
+      }
+
+      .nav-group-label {
+        font-size: 10px;
+        font-weight: 400;
+        color: var(--color-text-hint);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding: 8px 14px 4px;
       }
 
       .nav-item {
-        display: block;
-        padding: 9px 16px;
-        font-size: 13.5px;
-        color: #444;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        height: 36px;
+        padding: 0 12px;
+        font-size: 13px;
+        font-weight: 400;
+        color: var(--color-text-muted);
+        border-left: 2px solid transparent;
         cursor: pointer;
-        border-left: 3px solid transparent;
         user-select: none;
         text-decoration: none;
+        transition: color 0.1s, background 0.1s;
       }
 
-      .nav-item:hover { background: #f7f7f7; color: #1a1a1a; }
+      .nav-item i {
+        font-size: 16px;
+        flex-shrink: 0;
+        opacity: 0.6;
+        transition: opacity 0.1s;
+      }
+
+      .nav-item:hover { color: var(--color-text); background: var(--color-bg); }
+      .nav-item:hover i { opacity: 1; }
 
       .nav-item.active {
-        border-left-color: #0f766e;
-        background: #f0fdf9;
-        color: #0f766e;
-        font-weight: 600;
+        border-left-color: var(--color-accent);
+        background: var(--color-accent-light);
+        color: var(--color-accent);
+        font-weight: 500;
       }
+
+      .nav-item.active i { opacity: 1; }
 
       .sidebar-bottom {
-        padding: 14px 16px;
-        border-top: 1px solid #e8e8e8;
+        padding: 10px 8px 14px;
+        border-top: 0.5px solid var(--color-border);
       }
 
-      .logged-in-as {
-        font-size: 12px;
-        color: #888;
-        margin-bottom: 8px;
+      .sidebar-user-row { padding: 4px 14px 10px; }
+
+      .sidebar-username {
+        display: block;
+        font-size: 12.5px;
+        color: var(--color-text-muted);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
 
       .btn-signout {
+        display: flex;
+        align-items: center;
+        gap: 7px;
         width: 100%;
-        padding: 7px 0;
-        background: #fff;
-        border: 1px solid #d4d4d4;
-        border-radius: 3px;
+        padding: 7px 12px;
+        background: transparent;
+        border: 0.5px solid var(--color-border-strong);
+        border-radius: 5px;
         font-size: 13px;
-        color: #444;
+        font-weight: 400;
+        color: var(--color-text-muted);
         cursor: pointer;
+        font-family: inherit;
+        text-align: left;
+        transition: background 0.1s, color 0.1s;
       }
 
-      .btn-signout:hover { background: #fef2f2; border-color: #f9a8a8; color: #c0392b; }
+      .btn-signout i { font-size: 15px; }
+      .btn-signout:hover { background: var(--color-border); color: var(--color-text); }
 
-      /* ---- Main area ---- */
+      /* ============================================================
+         MAIN LAYOUT
+      ============================================================ */
       .main {
-        margin-left: 210px;
+        margin-left: var(--sidebar-w);
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -111,293 +169,457 @@
       }
 
       .topbar {
-        background: #fff;
-        border-bottom: 1px solid #d4d4d4;
-        padding: 13px 24px;
+        background: var(--color-surface);
+        border-bottom: 0.5px solid var(--color-border-strong);
+        height: 52px;
+        padding: 0 24px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         position: sticky;
         top: 0;
-        z-index: 5;
+        z-index: 10;
       }
 
-      .topbar-left h2 {
+      .topbar-title {
         font-size: 15px;
-        font-weight: 600;
-        color: #1a1a1a;
+        font-weight: 500;
+        color: var(--color-text);
+        letter-spacing: -0.1px;
       }
 
-      .topbar-right {
-        font-size: 12.5px;
-        color: #888;
+      .topbar-date {
+        font-size: 13px;
+        color: var(--color-text-hint);
       }
 
-      .content {
-        padding: 24px;
-        flex: 1;
-      }
+      .content { padding: 24px; flex: 1; }
 
-      /* ---- Sections ---- */
+      /* ============================================================
+         SECTIONS
+      ============================================================ */
       .section { display: none; }
       .section.active { display: block; }
 
-      /* ---- Stats row ---- */
-      .stats-row {
-        display: flex;
-        gap: 14px;
-        margin-bottom: 28px;
-      }
+      /* ============================================================
+         METRIC CARDS
+      ============================================================ */
+      .stats-row { display: flex; gap: 12px; margin-bottom: 24px; }
 
       .stat-card {
-        background: #fff;
-        border: 1px solid #d4d4d4;
-        border-left: 3px solid #0f766e;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
         padding: 16px 20px;
-        min-width: 140px;
+        min-width: 148px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
       }
 
-      .stat-card .number {
-        font-size: 30px;
-        font-weight: 700;
-        color: #0f766e;
-        line-height: 1;
+      .stat-card-content { flex: 1; }
+      .stat-label { font-size: 12px; font-weight: 400; color: var(--color-text-hint); margin-bottom: 4px; }
+      .stat-value { font-size: 28px; font-weight: 500; color: var(--color-accent); line-height: 1.1; letter-spacing: -0.5px; }
+
+      .stat-card-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: var(--color-accent-light);
+        border: 1px solid rgba(15,118,110,0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--color-accent);
+        flex-shrink: 0;
       }
 
-      .stat-card .label {
-        font-size: 12px;
-        color: #777;
-        margin-top: 5px;
-      }
+      .stat-card-icon i { font-size: 18px; }
 
-      /* ---- Section heading ---- */
+      /* ============================================================
+         SECTION HEADINGS
+      ============================================================ */
       .section-heading {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 14px;
+        gap: 10px;
+        margin-bottom: 12px;
       }
 
-      .section-heading h3 {
-        font-size: 13.5px;
-        font-weight: 600;
-        color: #333;
+      .section-title { font-size: 13px; font-weight: 500; color: var(--color-text); }
+
+      .section-heading-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
       }
 
-      /* ---- Tables ---- */
+      /* ============================================================
+         SEARCH BAR
+      ============================================================ */
+      .search-wrap {
+        position: relative;
+        flex-shrink: 0;
+      }
+
+      .search-wrap i {
+        position: absolute;
+        left: 9px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--color-text-hint);
+        font-size: 14px;
+        pointer-events: none;
+      }
+
+      .search-wrap input {
+        padding: 5px 10px 5px 30px;
+        border: 0.5px solid var(--color-border-strong);
+        border-radius: 6px;
+        font-size: 12.5px;
+        font-family: inherit;
+        outline: none;
+        background: var(--color-surface);
+        color: var(--color-text);
+        width: 190px;
+        transition: border-color 0.15s, width 0.2s;
+      }
+
+      .search-wrap input:focus {
+        border-color: var(--color-accent);
+        width: 230px;
+      }
+
+      .search-wrap input::placeholder { color: var(--color-text-hint); }
+
+      /* ============================================================
+         TABLES
+      ============================================================ */
       .table-wrap {
-        background: #fff;
-        border: 1px solid #d4d4d4;
-        overflow-x: auto;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        overflow: hidden;
       }
 
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 13.5px;
-      }
+      table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 
       thead th {
-        background: #f7f7f7;
-        padding: 9px 14px;
+        background: #fafaf9;
+        padding: 11px 16px;
         text-align: left;
-        font-weight: 600;
-        color: #333;
-        border-bottom: 1px solid #d4d4d4;
+        font-size: 12px;
+        font-weight: 400;
+        color: var(--color-text-hint);
+        border-bottom: 0.5px solid var(--color-border);
         white-space: nowrap;
       }
 
       tbody td {
-        padding: 9px 14px;
-        color: #333;
-        border-bottom: 1px solid #ebebeb;
+        padding: 11px 16px;
+        color: var(--color-text);
+        border-bottom: 0.5px solid var(--color-border);
         vertical-align: middle;
       }
 
       tbody tr:last-child td { border-bottom: none; }
-      tbody tr:hover td { background: #fafafa; }
+      tbody tr:hover td { background: #fafaf9; }
 
       .empty-cell {
         text-align: center;
-        color: #aaa;
-        padding: 28px 14px;
+        color: var(--color-text-hint);
+        padding: 40px 16px;
         font-size: 13px;
       }
 
-      /* ---- Buttons ---- */
+      /* ============================================================
+         BUTTONS
+      ============================================================ */
       .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
         padding: 6px 14px;
-        border-radius: 3px;
+        border-radius: 6px;
         font-size: 13px;
+        font-weight: 400;
+        font-family: inherit;
         cursor: pointer;
-        border: 1px solid;
+        border: 0.5px solid transparent;
         line-height: 1.4;
+        white-space: nowrap;
+        transition: background 0.1s, color 0.1s, border-color 0.1s;
       }
 
-      .btn-primary {
-        background: #0f766e;
-        color: #fff;
-        border-color: #0f766e;
-      }
+      .btn-primary   { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
+      .btn-primary:hover { background: #0c5f58; border-color: #0c5f58; }
 
-      .btn-primary:hover { background: #0e6b63; }
+      .btn-secondary { background: transparent; color: var(--color-text-muted); border-color: var(--color-border-strong); }
+      .btn-secondary:hover { background: var(--color-bg); color: var(--color-text); }
 
-      .btn-secondary {
-        background: #fff;
-        color: #444;
-        border-color: #d4d4d4;
-      }
+      /* Small row-action buttons */
+      .btn-sm { padding: 3px 10px; font-size: 12.5px; }
 
-      .btn-secondary:hover { background: #f7f7f7; }
-
-      .btn-danger {
-        background: #fff;
-        color: #c0392b;
-        border-color: #f5b7b1;
-        padding: 4px 10px;
-        font-size: 12.5px;
-      }
-
+      .btn-danger { background: transparent; color: #b91c1c; border-color: rgba(185,28,28,0.25); }
       .btn-danger:hover { background: #fef2f2; }
 
-      /* ---- Add event form panel ---- */
+      .btn-group { display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
+
+      /* ============================================================
+         FORM PANELS
+      ============================================================ */
       .form-panel {
-        background: #fff;
-        border: 1px solid #d4d4d4;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
         padding: 18px 20px;
-        margin-bottom: 16px;
+        margin-bottom: 12px;
         display: none;
       }
 
       .form-panel.open { display: block; }
 
-      .form-panel h4 {
-        font-size: 13.5px;
-        font-weight: 600;
-        margin-bottom: 14px;
-        color: #333;
-      }
+      .form-panel-title { font-size: 13px; font-weight: 500; color: var(--color-text); margin-bottom: 14px; }
 
-      .form-row {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-bottom: 10px;
-      }
+      .form-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
 
       .form-field {
         display: flex;
         flex-direction: column;
         flex: 1;
-        min-width: 180px;
+        min-width: 160px;
+        gap: 4px;
       }
 
-      .form-field label {
-        font-size: 12px;
-        font-weight: 600;
-        color: #555;
-        margin-bottom: 4px;
-      }
+      .form-field label { font-size: 12px; font-weight: 500; color: var(--color-text-muted); }
+
+      .form-field .field-hint { font-size: 11.5px; color: var(--color-text-hint); margin-top: 2px; }
 
       .form-field input,
       .form-field textarea {
-        padding: 7px 9px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        font-size: 13.5px;
+        padding: 7px 10px;
+        border: 0.5px solid var(--color-border-strong);
+        border-radius: 6px;
+        font-size: 13px;
         font-family: inherit;
         outline: none;
-        background: #fafafa;
-        color: #1a1a1a;
+        background: var(--color-bg);
+        color: var(--color-text);
+        transition: border-color 0.15s, background 0.15s;
       }
 
       .form-field input:focus,
-      .form-field textarea:focus {
-        border-color: #0f766e;
-        background: #fff;
-      }
+      .form-field textarea:focus { border-color: var(--color-accent); background: var(--color-surface); }
 
-      .form-field textarea {
-        resize: vertical;
-        min-height: 60px;
-      }
+      .form-field textarea { resize: vertical; min-height: 64px; }
 
-      .form-actions {
-        display: flex;
-        gap: 8px;
-        margin-top: 6px;
-      }
+      .form-actions { display: flex; gap: 8px; margin-top: 8px; }
 
-      /* ---- Alert banners ---- */
+      /* ============================================================
+         ALERTS
+      ============================================================ */
       .alert {
-        padding: 8px 12px;
-        border-radius: 3px;
+        padding: 9px 14px;
+        border-radius: 6px;
         font-size: 13px;
         margin-bottom: 12px;
         display: none;
       }
 
-      .alert.error   { background: #fef2f2; border: 1px solid #f9a8a8; color: #c0392b; }
-      .alert.success { background: #f0fdf9; border: 1px solid #99e6d8; color: #0f766e; }
+      .alert.error   { background: #fef2f2; border: 0.5px solid rgba(185,28,28,0.2); color: #b91c1c; }
+      .alert.success { background: var(--color-accent-light); border: 0.5px solid rgba(15,118,110,0.2); color: var(--color-accent); }
 
-      /* ---- Date badge ---- */
-      .date-text { color: #555; }
+      /* ============================================================
+         PROFILE SECTION
+      ============================================================ */
+      .profile-info-card {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 24px;
+      }
+
+      .profile-info-header {
+        padding: 11px 16px;
+        border-bottom: 0.5px solid var(--color-border);
+        background: #fafaf9;
+      }
+
+      .profile-info-header span {
+        font-size: 12px;
+        font-weight: 400;
+        color: var(--color-text-hint);
+      }
+
+      .profile-info-row {
+        display: flex;
+        align-items: center;
+        padding: 11px 16px;
+        border-bottom: 0.5px solid var(--color-border);
+        font-size: 13.5px;
+      }
+
+      .profile-info-row:last-child { border-bottom: none; }
+
+      .profile-info-key {
+        width: 120px;
+        flex-shrink: 0;
+        font-size: 12px;
+        color: var(--color-text-hint);
+      }
+
+      .profile-info-val { color: var(--color-text); }
+
+      .role-pill {
+        display: inline-block;
+        padding: 1px 9px;
+        border-radius: 20px;
+        font-size: 11.5px;
+        font-weight: 400;
+        background: var(--color-accent-light);
+        border: 0.5px solid rgba(15,118,110,0.25);
+        color: var(--color-accent);
+      }
+
+      .setting-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .setting-card {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .setting-card-header {
+        padding: 11px 16px;
+        border-bottom: 0.5px solid var(--color-border);
+        background: #fafaf9;
+      }
+
+      .setting-card-title {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--color-text);
+      }
+
+      .setting-card-sub {
+        font-size: 11.5px;
+        color: var(--color-text-hint);
+        margin-top: 1px;
+      }
+
+      .setting-card-body {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .setting-card-footer {
+        padding: 11px 16px;
+        border-top: 0.5px solid var(--color-border);
+        background: #fafaf9;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .pf-alert {
+        font-size: 12.5px;
+        display: none;
+      }
+
+      .pf-alert.error   { color: #b91c1c; display: block; }
+      .pf-alert.success { color: var(--color-accent); display: block; }
     </style>
   </head>
   <body>
 
-    <!-- Sidebar -->
+    <!-- ===================== SIDEBAR ===================== -->
     <aside class="sidebar">
       <div class="sidebar-brand">
-        <strong>System Dash</strong>
-        <span>Manager Panel</span>
+        <span class="brand-name">Academic Events</span>
+        <span class="brand-sub">Manager panel</span>
       </div>
+
       <nav class="sidebar-nav">
-        <a class="nav-item active" data-section="overview">Overview</a>
-        <a class="nav-item"        data-section="events">Events</a>
-        <a class="nav-item"        data-section="students">Students</a>
+        <div class="nav-group-label">Navigation</div>
+        <a class="nav-item active" data-section="overview">
+          <i class="ti ti-layout-dashboard"></i>Overview
+        </a>
+        <a class="nav-item" data-section="events">
+          <i class="ti ti-calendar-event"></i>Events
+        </a>
+        <a class="nav-item" data-section="students">
+          <i class="ti ti-users"></i>Students
+        </a>
+        <a class="nav-item" data-section="profile">
+          <i class="ti ti-user-circle"></i>My profile
+        </a>
       </nav>
+
       <div class="sidebar-bottom">
-        <div class="logged-in-as" id="sidebar-user">...</div>
-        <button class="btn-signout" id="logout-btn">Sign out</button>
+        <div class="sidebar-user-row">
+          <span class="sidebar-username" id="sidebar-user">...</span>
+        </div>
+        <button class="btn-signout" id="logout-btn">
+          <i class="ti ti-logout"></i>Sign out
+        </button>
       </div>
     </aside>
 
-    <!-- Main -->
+    <!-- ===================== MAIN ===================== -->
     <div class="main">
       <div class="topbar">
-        <div class="topbar-left">
-          <h2 id="topbar-title">Overview</h2>
-        </div>
-        <div class="topbar-right" id="topbar-date"></div>
+        <span class="topbar-title" id="topbar-title">Overview</span>
+        <span class="topbar-date" id="topbar-date"></span>
       </div>
 
       <div class="content">
 
-        <!-- Overview -->
+        <!-- ========== OVERVIEW ========== -->
         <div class="section active" id="section-overview">
           <div class="stats-row">
             <div class="stat-card">
-              <div class="number" id="stat-events">-</div>
-              <div class="label">Total Events</div>
+              <div class="stat-card-content">
+                <div class="stat-label">Total events</div>
+                <div class="stat-value" id="stat-events">—</div>
+              </div>
+              <div class="stat-card-icon">
+                <i class="ti ti-calendar-event"></i>
+              </div>
             </div>
             <div class="stat-card">
-              <div class="number" id="stat-students">-</div>
-              <div class="label">Registered Students</div>
+              <div class="stat-card-content">
+                <div class="stat-label">Registered students</div>
+                <div class="stat-value" id="stat-students">—</div>
+              </div>
+              <div class="stat-card-icon">
+                <i class="ti ti-users"></i>
+              </div>
             </div>
           </div>
 
           <div class="section-heading">
-            <h3>Upcoming Events</h3>
+            <span class="section-title">Upcoming events</span>
+            <div class="search-wrap">
+              <i class="ti ti-search"></i>
+              <input type="search" id="overview-search" placeholder="Search events..." />
+            </div>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Date</th>
-                  <th>Location</th>
-                </tr>
+                <tr><th>Title</th><th>Date</th><th>Location</th></tr>
               </thead>
               <tbody id="overview-tbody">
                 <tr><td class="empty-cell" colspan="3">Loading...</td></tr>
@@ -406,18 +628,26 @@
           </div>
         </div>
 
-        <!-- Events -->
+        <!-- ========== EVENTS ========== -->
         <div class="section" id="section-events">
+
           <div class="alert error"   id="ev-error"></div>
           <div class="alert success" id="ev-success"></div>
 
           <div class="section-heading">
-            <h3>All Events</h3>
-            <button class="btn btn-primary" id="toggle-form-btn">Add Event</button>
+            <span class="section-title">All events</span>
+            <div class="section-heading-right">
+              <div class="search-wrap">
+                <i class="ti ti-search"></i>
+                <input type="search" id="ev-search" placeholder="Search events..." />
+              </div>
+              <button class="btn btn-primary btn-sm" id="toggle-form-btn">Add event</button>
+            </div>
           </div>
 
+          <!-- Add / Edit event form -->
           <div class="form-panel" id="add-form">
-            <h4>New Event</h4>
+            <div class="form-panel-title" id="ev-form-title">New event</div>
             <div class="form-row">
               <div class="form-field">
                 <label for="ev-title">Title</label>
@@ -431,7 +661,7 @@
             <div class="form-row">
               <div class="form-field">
                 <label for="ev-location">Location</label>
-                <input type="text" id="ev-location" placeholder="Room / Building" />
+                <input type="text" id="ev-location" placeholder="Room / building" />
               </div>
             </div>
             <div class="form-row">
@@ -441,7 +671,7 @@
               </div>
             </div>
             <div class="form-actions">
-              <button class="btn btn-primary" id="save-ev-btn">Save Event</button>
+              <button class="btn btn-primary" id="save-ev-btn">Save event</button>
               <button class="btn btn-secondary" id="cancel-form-btn">Cancel</button>
             </div>
           </div>
@@ -453,7 +683,7 @@
                   <th>Title</th>
                   <th>Date</th>
                   <th>Location</th>
-                  <th style="width: 80px;"></th>
+                  <th style="width:130px;"></th>
                 </tr>
               </thead>
               <tbody id="events-tbody">
@@ -463,11 +693,49 @@
           </div>
         </div>
 
-        <!-- Students -->
+        <!-- ========== STUDENTS ========== -->
         <div class="section" id="section-students">
+
+          <div class="alert error"   id="st-error"></div>
+          <div class="alert success" id="st-success"></div>
+
           <div class="section-heading">
-            <h3>Registered Students</h3>
+            <span class="section-title">Registered students</span>
+            <div class="section-heading-right">
+              <div class="search-wrap">
+                <i class="ti ti-search"></i>
+                <input type="search" id="st-search" placeholder="Search students..." />
+              </div>
+              <button class="btn btn-primary btn-sm" id="st-toggle-btn">Add student</button>
+            </div>
           </div>
+
+          <!-- Add / Edit student form -->
+          <div class="form-panel" id="st-form">
+            <div class="form-panel-title" id="st-form-title">New student</div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="st-name">Full name</label>
+                <input type="text" id="st-name" placeholder="Full name" autocomplete="off" />
+              </div>
+              <div class="form-field">
+                <label for="st-email">Email address</label>
+                <input type="email" id="st-email" placeholder="student@example.com" autocomplete="off" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="st-password">Password</label>
+                <input type="password" id="st-password" placeholder="Minimum 8 characters" autocomplete="new-password" />
+                <span class="field-hint" id="st-pw-hint" style="display:none;">Leave blank to keep the current password.</span>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-primary" id="st-save-btn">Save student</button>
+              <button class="btn btn-secondary" id="st-cancel-btn">Cancel</button>
+            </div>
+          </div>
+
           <div class="table-wrap">
             <table>
               <thead>
@@ -475,13 +743,107 @@
                   <th>Name</th>
                   <th>Email</th>
                   <th>Joined</th>
+                  <th style="width:130px;"></th>
                 </tr>
               </thead>
               <tbody id="students-tbody">
-                <tr><td class="empty-cell" colspan="3">Loading...</td></tr>
+                <tr><td class="empty-cell" colspan="4">Loading...</td></tr>
               </tbody>
             </table>
           </div>
+        </div>
+
+        <!-- ========== MY PROFILE ========== -->
+        <div class="section" id="section-profile">
+
+          <!-- Account info -->
+          <div class="profile-info-card">
+            <div class="profile-info-header"><span>Account information</span></div>
+            <div class="profile-info-row">
+              <span class="profile-info-key">Full name</span>
+              <span class="profile-info-val" id="pf-display-name">—</span>
+            </div>
+            <div class="profile-info-row">
+              <span class="profile-info-key">Email</span>
+              <span class="profile-info-val" id="pf-display-email">—</span>
+            </div>
+            <div class="profile-info-row">
+              <span class="profile-info-key">Role</span>
+              <span class="profile-info-val"><span class="role-pill">Manager</span></span>
+            </div>
+          </div>
+
+          <!-- Change name + Change email -->
+          <div class="setting-grid-2">
+
+            <div class="setting-card">
+              <div class="setting-card-header">
+                <div class="setting-card-title">Full name</div>
+                <div class="setting-card-sub">Update your display name.</div>
+              </div>
+              <div class="setting-card-body">
+                <div class="form-field">
+                  <label for="pf-name">New full name</label>
+                  <input type="text" id="pf-name" placeholder="Your full name" autocomplete="off" />
+                </div>
+              </div>
+              <div class="setting-card-footer">
+                <button class="btn btn-primary btn-sm" id="pf-save-name">Update name</button>
+                <span class="pf-alert" id="pf-name-alert"></span>
+              </div>
+            </div>
+
+            <div class="setting-card">
+              <div class="setting-card-header">
+                <div class="setting-card-title">Email address</div>
+                <div class="setting-card-sub">Requires your current password.</div>
+              </div>
+              <div class="setting-card-body">
+                <div class="form-field">
+                  <label for="pf-new-email">New email</label>
+                  <input type="email" id="pf-new-email" placeholder="new@example.com" autocomplete="off" />
+                </div>
+                <div class="form-field">
+                  <label for="pf-email-pw">Confirm password</label>
+                  <input type="password" id="pf-email-pw" placeholder="Your current password" />
+                </div>
+              </div>
+              <div class="setting-card-footer">
+                <button class="btn btn-primary btn-sm" id="pf-save-email">Update email</button>
+                <span class="pf-alert" id="pf-email-alert"></span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Change password (full width) -->
+          <div class="setting-card">
+            <div class="setting-card-header">
+              <div class="setting-card-title">Password</div>
+              <div class="setting-card-sub">Choose a strong password of at least 8 characters.</div>
+            </div>
+            <div class="setting-card-body">
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="pf-cur-pw">Current password</label>
+                  <input type="password" id="pf-cur-pw" placeholder="Current password" />
+                </div>
+                <div class="form-field">
+                  <label for="pf-new-pw">New password</label>
+                  <input type="password" id="pf-new-pw" placeholder="Minimum 8 characters" />
+                </div>
+                <div class="form-field">
+                  <label for="pf-conf-pw">Confirm new password</label>
+                  <input type="password" id="pf-conf-pw" placeholder="Repeat new password" />
+                </div>
+              </div>
+            </div>
+            <div class="setting-card-footer">
+              <button class="btn btn-primary btn-sm" id="pf-save-pw">Update password</button>
+              <span class="pf-alert" id="pf-pw-alert"></span>
+            </div>
+          </div>
+
         </div>
 
       </div><!-- /content -->
@@ -517,7 +879,7 @@
       }
 
       function emptyRow(cols, msg) {
-        const tr = document.createElement('tr');
+        const tr   = document.createElement('tr');
         const cell = document.createElement('td');
         cell.colSpan = cols;
         cell.className = 'empty-cell';
@@ -532,46 +894,57 @@
         try {
           const data = await get('/me.php');
           if (!data.success || data.data.role !== 'manager') {
-            window.location.href = 'login.html';
+            window.location.href = '../../login.php';
             return null;
           }
           return data.data;
         } catch {
-          window.location.href = 'login.html';
+          window.location.href = '../../login.php';
           return null;
         }
       }
 
       // ---- Navigation ----
 
-      const sectionTitles = { overview: 'Overview', events: 'Events', students: 'Students' };
-      let currentSection = 'overview';
+      const sectionTitles = { overview: 'Overview', events: 'Events', students: 'Students', profile: 'My profile' };
+      let currentSection  = 'overview';
 
       function showSection(name) {
         document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-
         document.getElementById('section-' + name).classList.add('active');
         document.querySelector('[data-section="' + name + '"]').classList.add('active');
         document.getElementById('topbar-title').textContent = sectionTitles[name];
         currentSection = name;
-
         if (name === 'overview') loadOverview();
         if (name === 'events')   loadEvents();
         if (name === 'students') loadStudents();
+        if (name === 'profile')  loadProfile();
       }
 
       document.querySelectorAll('.nav-item').forEach(el => {
         el.addEventListener('click', () => showSection(el.dataset.section));
       });
 
+      // ---- Search ----
+
+      function filterTable(inputId, tbodyId) {
+        const q    = document.getElementById(inputId).value.trim().toLowerCase();
+        const rows = document.getElementById(tbodyId).querySelectorAll('tr');
+        rows.forEach(tr => {
+          if (tr.querySelector('.empty-cell')) { tr.style.display = ''; return; }
+          tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
+        });
+      }
+
+      document.getElementById('overview-search').addEventListener('input', () => filterTable('overview-search', 'overview-tbody'));
+      document.getElementById('ev-search').addEventListener('input',       () => filterTable('ev-search',       'events-tbody'));
+      document.getElementById('st-search').addEventListener('input',       () => filterTable('st-search',       'students-tbody'));
+
       // ---- Overview ----
 
       async function loadOverview() {
-        const [statsData, eventsData] = await Promise.all([
-          get('/stats.php'),
-          get('/events.php'),
-        ]);
+        const [statsData, eventsData] = await Promise.all([get('/stats.php'), get('/events.php')]);
 
         if (statsData.success) {
           document.getElementById('stat-events').textContent   = statsData.data.events;
@@ -580,22 +953,12 @@
 
         const tbody = document.getElementById('overview-tbody');
         tbody.innerHTML = '';
-
         if (!eventsData.success || !eventsData.data.events.length) {
-          tbody.appendChild(emptyRow(3, 'No events yet.'));
-          return;
+          tbody.appendChild(emptyRow(3, 'No events yet.')); return;
         }
-
-        const today = new Date().toISOString().slice(0, 10);
-        const upcoming = eventsData.data.events
-          .filter(e => e.event_date >= today)
-          .slice(0, 10);
-
-        if (!upcoming.length) {
-          tbody.appendChild(emptyRow(3, 'No upcoming events.'));
-          return;
-        }
-
+        const today    = new Date().toISOString().slice(0, 10);
+        const upcoming = eventsData.data.events.filter(e => e.event_date >= today).slice(0, 10);
+        if (!upcoming.length) { tbody.appendChild(emptyRow(3, 'No upcoming events.')); return; }
         upcoming.forEach(ev => {
           const tr = document.createElement('tr');
           tr.appendChild(td(ev.title));
@@ -607,55 +970,51 @@
 
       // ---- Events ----
 
-      async function loadEvents() {
-        const data = await get('/events.php');
-        const tbody = document.getElementById('events-tbody');
-        tbody.innerHTML = '';
+      let evMode   = 'add';
+      let evEditId = null;
 
-        if (!data.success || !data.data.events.length) {
-          tbody.appendChild(emptyRow(4, 'No events found.'));
-          return;
-        }
-
-        data.data.events.forEach(ev => {
-          const tr = document.createElement('tr');
-          tr.appendChild(td(ev.title));
-          tr.appendChild(td(fmtDate(ev.event_date)));
-          tr.appendChild(td(ev.location));
-
-          const actionTd = document.createElement('td');
-          const delBtn = document.createElement('button');
-          delBtn.className = 'btn btn-danger';
-          delBtn.textContent = 'Delete';
-          delBtn.addEventListener('click', () => deleteEvent(ev.id));
-          actionTd.appendChild(delBtn);
-          tr.appendChild(actionTd);
-
-          tbody.appendChild(tr);
-        });
+      function evOpenAdd() {
+        evMode   = 'add';
+        evEditId = null;
+        document.getElementById('ev-form-title').textContent = 'New event';
+        document.getElementById('save-ev-btn').textContent   = 'Save event';
+        document.getElementById('ev-title').value    = '';
+        document.getElementById('ev-date').value     = '';
+        document.getElementById('ev-location').value = '';
+        document.getElementById('ev-desc').value     = '';
+        document.getElementById('add-form').classList.add('open');
+        document.getElementById('toggle-form-btn').textContent = 'Cancel';
       }
 
-      function showEvAlert(type, msg) {
-        const err = document.getElementById('ev-error');
-        const ok  = document.getElementById('ev-success');
-        err.style.display = 'none';
-        ok.style.display  = 'none';
-        if (type === 'error')   { err.textContent = msg; err.style.display = 'block'; }
-        if (type === 'success') { ok.textContent  = msg; ok.style.display  = 'block'; }
-        setTimeout(() => { err.style.display = 'none'; ok.style.display = 'none'; }, 3500);
+      function evOpenEdit(ev) {
+        evMode   = 'edit';
+        evEditId = ev.id;
+        document.getElementById('ev-form-title').textContent = 'Edit event';
+        document.getElementById('save-ev-btn').textContent   = 'Update event';
+        document.getElementById('ev-title').value    = ev.title        || '';
+        document.getElementById('ev-date').value     = ev.event_date   || '';
+        document.getElementById('ev-location').value = ev.location     || '';
+        document.getElementById('ev-desc').value     = ev.description  || '';
+        document.getElementById('add-form').classList.add('open');
+        document.getElementById('toggle-form-btn').textContent = 'Cancel';
+        document.getElementById('add-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      function evClose() {
+        evMode   = 'add';
+        evEditId = null;
+        document.getElementById('ev-form-title').textContent  = 'New event';
+        document.getElementById('save-ev-btn').textContent    = 'Save event';
+        document.getElementById('add-form').classList.remove('open');
+        document.getElementById('toggle-form-btn').textContent = 'Add event';
       }
 
       document.getElementById('toggle-form-btn').addEventListener('click', () => {
-        const panel = document.getElementById('add-form');
-        panel.classList.toggle('open');
-        document.getElementById('toggle-form-btn').textContent =
-          panel.classList.contains('open') ? 'Cancel' : 'Add Event';
+        const open = document.getElementById('add-form').classList.contains('open');
+        open ? evClose() : evOpenAdd();
       });
 
-      document.getElementById('cancel-form-btn').addEventListener('click', () => {
-        document.getElementById('add-form').classList.remove('open');
-        document.getElementById('toggle-form-btn').textContent = 'Add Event';
-      });
+      document.getElementById('cancel-form-btn').addEventListener('click', evClose);
 
       document.getElementById('save-ev-btn').addEventListener('click', async () => {
         const title    = document.getElementById('ev-title').value.trim();
@@ -663,28 +1022,21 @@
         const location = document.getElementById('ev-location').value.trim();
         const desc     = document.getElementById('ev-desc').value.trim();
 
-        if (!title || !date) {
-          showEvAlert('error', 'Title and date are required.');
-          return;
-        }
+        if (!title || !date) { showEvAlert('error', 'Title and date are required.'); return; }
 
         const btn = document.getElementById('save-ev-btn');
-        btn.disabled = true;
-        btn.textContent = 'Saving...';
+        const lbl = btn.textContent;
+        btn.disabled = true; btn.textContent = 'Saving...';
 
-        const data = await post('/events.php', { action: 'add', title, event_date: date, location, description: desc });
+        const payload = { action: evMode, title, event_date: date, location, description: desc };
+        if (evMode === 'edit') payload.id = evEditId;
 
-        btn.disabled = false;
-        btn.textContent = 'Save Event';
+        const data = await post('/events.php', payload);
+        btn.disabled = false; btn.textContent = lbl;
 
         if (data.success) {
-          document.getElementById('ev-title').value    = '';
-          document.getElementById('ev-date').value     = '';
-          document.getElementById('ev-location').value = '';
-          document.getElementById('ev-desc').value     = '';
-          document.getElementById('add-form').classList.remove('open');
-          document.getElementById('toggle-form-btn').textContent = 'Add Event';
-          showEvAlert('success', 'Event added.');
+          showEvAlert('success', evMode === 'add' ? 'Event added.' : 'Event updated.');
+          evClose();
           loadEvents();
         } else {
           showEvAlert('error', data.message);
@@ -694,24 +1046,160 @@
       async function deleteEvent(id) {
         if (!confirm('Delete this event?')) return;
         const data = await post('/events.php', { action: 'delete', id });
-        if (data.success) {
-          showEvAlert('success', 'Event deleted.');
-          loadEvents();
-        } else {
-          showEvAlert('error', data.message);
+        if (data.success) { showEvAlert('success', 'Event deleted.'); loadEvents(); }
+        else              { showEvAlert('error', data.message); }
+      }
+
+      function showEvAlert(type, msg) {
+        const err = document.getElementById('ev-error');
+        const ok  = document.getElementById('ev-success');
+        err.style.display = ok.style.display = 'none';
+        if (type === 'error')   { err.textContent = msg; err.style.display = 'block'; }
+        if (type === 'success') { ok.textContent  = msg; ok.style.display  = 'block'; }
+        setTimeout(() => { err.style.display = ok.style.display = 'none'; }, 3500);
+      }
+
+      async function loadEvents() {
+        document.getElementById('ev-search').value = '';
+        const data  = await get('/events.php');
+        const tbody = document.getElementById('events-tbody');
+        tbody.innerHTML = '';
+
+        if (!data.success || !data.data.events.length) {
+          tbody.appendChild(emptyRow(4, 'No events found.')); return;
         }
+
+        data.data.events.forEach(ev => {
+          const tr = document.createElement('tr');
+          tr.appendChild(td(ev.title));
+          tr.appendChild(td(fmtDate(ev.event_date)));
+          tr.appendChild(td(ev.location));
+
+          const actionTd  = document.createElement('td');
+          const btnGroup  = document.createElement('div');
+          btnGroup.className = 'btn-group';
+
+          const editBtn = document.createElement('button');
+          editBtn.className   = 'btn btn-secondary btn-sm';
+          editBtn.textContent = 'Edit';
+          editBtn.addEventListener('click', () => evOpenEdit(ev));
+
+          const delBtn = document.createElement('button');
+          delBtn.className   = 'btn btn-danger btn-sm';
+          delBtn.textContent = 'Delete';
+          delBtn.addEventListener('click', () => deleteEvent(ev.id));
+
+          btnGroup.appendChild(editBtn);
+          btnGroup.appendChild(delBtn);
+          actionTd.appendChild(btnGroup);
+          tr.appendChild(actionTd);
+          tbody.appendChild(tr);
+        });
       }
 
       // ---- Students ----
 
+      let stMode   = 'add';
+      let stEditId = null;
+
+      function stOpenAdd() {
+        stMode   = 'add';
+        stEditId = null;
+        document.getElementById('st-form-title').textContent  = 'New student';
+        document.getElementById('st-save-btn').textContent    = 'Save student';
+        document.getElementById('st-name').value              = '';
+        document.getElementById('st-email').value             = '';
+        document.getElementById('st-password').value          = '';
+        document.getElementById('st-password').placeholder   = 'Minimum 8 characters';
+        document.getElementById('st-pw-hint').style.display  = 'none';
+        document.getElementById('st-form').classList.add('open');
+        document.getElementById('st-toggle-btn').textContent = 'Cancel';
+      }
+
+      function stOpenEdit(st) {
+        stMode   = 'edit';
+        stEditId = st.id;
+        document.getElementById('st-form-title').textContent  = 'Edit student';
+        document.getElementById('st-save-btn').textContent    = 'Update student';
+        document.getElementById('st-name').value              = st.full_name || '';
+        document.getElementById('st-email').value             = st.email     || '';
+        document.getElementById('st-password').value          = '';
+        document.getElementById('st-password').placeholder   = 'Leave blank to keep unchanged';
+        document.getElementById('st-pw-hint').style.display  = 'block';
+        document.getElementById('st-form').classList.add('open');
+        document.getElementById('st-toggle-btn').textContent = 'Cancel';
+        document.getElementById('st-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      function stClose() {
+        stMode   = 'add';
+        stEditId = null;
+        document.getElementById('st-form-title').textContent  = 'New student';
+        document.getElementById('st-save-btn').textContent    = 'Save student';
+        document.getElementById('st-form').classList.remove('open');
+        document.getElementById('st-toggle-btn').textContent = 'Add student';
+        document.getElementById('st-pw-hint').style.display  = 'none';
+      }
+
+      document.getElementById('st-toggle-btn').addEventListener('click', () => {
+        const open = document.getElementById('st-form').classList.contains('open');
+        open ? stClose() : stOpenAdd();
+      });
+
+      document.getElementById('st-cancel-btn').addEventListener('click', stClose);
+
+      document.getElementById('st-save-btn').addEventListener('click', async () => {
+        const full_name = document.getElementById('st-name').value.trim();
+        const email     = document.getElementById('st-email').value.trim();
+        const password  = document.getElementById('st-password').value;
+
+        if (!full_name || !email) { showStAlert('error', 'Full name and email are required.'); return; }
+        if (stMode === 'add' && !password) { showStAlert('error', 'Password is required.'); return; }
+
+        const btn = document.getElementById('st-save-btn');
+        const lbl = btn.textContent;
+        btn.disabled = true; btn.textContent = 'Saving...';
+
+        const payload = { action: stMode, full_name, email };
+        if (password)              payload.password = password;
+        if (stMode === 'edit')     payload.id       = stEditId;
+
+        const data = await post('/users.php', payload);
+        btn.disabled = false; btn.textContent = lbl;
+
+        if (data.success) {
+          showStAlert('success', stMode === 'add' ? 'Student added.' : 'Student updated.');
+          stClose();
+          loadStudents();
+        } else {
+          showStAlert('error', data.message);
+        }
+      });
+
+      async function deleteStudent(id) {
+        if (!confirm('Delete this student? This cannot be undone.')) return;
+        const data = await post('/users.php', { action: 'delete', id });
+        if (data.success) { showStAlert('success', 'Student deleted.'); loadStudents(); }
+        else              { showStAlert('error', data.message); }
+      }
+
+      function showStAlert(type, msg) {
+        const err = document.getElementById('st-error');
+        const ok  = document.getElementById('st-success');
+        err.style.display = ok.style.display = 'none';
+        if (type === 'error')   { err.textContent = msg; err.style.display = 'block'; }
+        if (type === 'success') { ok.textContent  = msg; ok.style.display  = 'block'; }
+        setTimeout(() => { err.style.display = ok.style.display = 'none'; }, 3500);
+      }
+
       async function loadStudents() {
-        const data = await get('/users.php');
+        document.getElementById('st-search').value = '';
+        const data  = await get('/users.php');
         const tbody = document.getElementById('students-tbody');
         tbody.innerHTML = '';
 
         if (!data.success || !data.data.users.length) {
-          tbody.appendChild(emptyRow(3, 'No students registered yet.'));
-          return;
+          tbody.appendChild(emptyRow(4, 'No students registered yet.')); return;
         }
 
         data.data.users.forEach(u => {
@@ -719,15 +1207,119 @@
           tr.appendChild(td(u.full_name));
           tr.appendChild(td(u.email));
           tr.appendChild(td(fmtDate(u.created_at ? u.created_at.slice(0, 10) : '')));
+
+          const actionTd = document.createElement('td');
+          const btnGroup = document.createElement('div');
+          btnGroup.className = 'btn-group';
+
+          const editBtn = document.createElement('button');
+          editBtn.className   = 'btn btn-secondary btn-sm';
+          editBtn.textContent = 'Edit';
+          editBtn.addEventListener('click', () => stOpenEdit(u));
+
+          const delBtn = document.createElement('button');
+          delBtn.className   = 'btn btn-danger btn-sm';
+          delBtn.textContent = 'Delete';
+          delBtn.addEventListener('click', () => deleteStudent(u.id));
+
+          btnGroup.appendChild(editBtn);
+          btnGroup.appendChild(delBtn);
+          actionTd.appendChild(btnGroup);
+          tr.appendChild(actionTd);
           tbody.appendChild(tr);
         });
       }
+
+      // ---- My profile ----
+
+      function pfAlert(id, type, msg) {
+        const el = document.getElementById(id);
+        el.className = 'pf-alert ' + type;
+        el.textContent = msg;
+        setTimeout(() => { el.className = 'pf-alert'; el.textContent = ''; }, 4000);
+      }
+
+      async function loadProfile() {
+        const data = await get('/me.php');
+        if (!data.success) return;
+        document.getElementById('pf-display-name').textContent  = data.data.name  || '—';
+        document.getElementById('pf-display-email').textContent = data.data.email || '—';
+        document.getElementById('pf-name').value = data.data.name || '';
+      }
+
+      document.getElementById('pf-save-name').addEventListener('click', async () => {
+        const full_name = document.getElementById('pf-name').value.trim();
+        if (!full_name) { pfAlert('pf-name-alert', 'error', 'Full name is required.'); return; }
+
+        const btn = document.getElementById('pf-save-name');
+        btn.disabled = true; btn.textContent = 'Saving...';
+
+        const data = await post('/update_name.php', { full_name });
+        btn.disabled = false; btn.textContent = 'Update name';
+
+        if (data.success) {
+          document.getElementById('pf-display-name').textContent = full_name;
+          document.getElementById('sidebar-user').textContent    = full_name;
+          pfAlert('pf-name-alert', 'success', 'Name updated.');
+        } else {
+          pfAlert('pf-name-alert', 'error', data.message);
+        }
+      });
+
+      document.getElementById('pf-save-email').addEventListener('click', async () => {
+        const new_email = document.getElementById('pf-new-email').value.trim();
+        const password  = document.getElementById('pf-email-pw').value;
+        if (!new_email || !password) { pfAlert('pf-email-alert', 'error', 'All fields are required.'); return; }
+
+        const btn = document.getElementById('pf-save-email');
+        btn.disabled = true; btn.textContent = 'Saving...';
+
+        const data = await post('/update_email.php', { new_email, password });
+        btn.disabled = false; btn.textContent = 'Update email';
+
+        if (data.success) {
+          document.getElementById('pf-display-email').textContent = new_email;
+          document.getElementById('pf-new-email').value           = '';
+          document.getElementById('pf-email-pw').value            = '';
+          pfAlert('pf-email-alert', 'success', 'Email updated.');
+        } else {
+          pfAlert('pf-email-alert', 'error', data.message);
+        }
+      });
+
+      document.getElementById('pf-save-pw').addEventListener('click', async () => {
+        const current_password = document.getElementById('pf-cur-pw').value;
+        const new_password     = document.getElementById('pf-new-pw').value;
+        const confirm_password = document.getElementById('pf-conf-pw').value;
+
+        if (!current_password || !new_password || !confirm_password) {
+          pfAlert('pf-pw-alert', 'error', 'All fields are required.'); return;
+        }
+        if (new_password !== confirm_password) {
+          pfAlert('pf-pw-alert', 'error', 'New passwords do not match.'); return;
+        }
+
+        const btn = document.getElementById('pf-save-pw');
+        btn.disabled = true; btn.textContent = 'Saving...';
+
+        const data = await post('/update_password.php', { current_password, new_password, confirm_password });
+        btn.disabled = false; btn.textContent = 'Update password';
+
+        if (data.success) {
+          document.getElementById('pf-cur-pw').value  = '';
+          document.getElementById('pf-new-pw').value  = '';
+          document.getElementById('pf-conf-pw').value = '';
+          pfAlert('pf-pw-alert', 'success', 'Password updated.');
+        } else {
+          pfAlert('pf-pw-alert', 'error', data.message);
+        }
+      });
 
       // ---- Logout ----
 
       document.getElementById('logout-btn').addEventListener('click', async () => {
         await fetch(BASE + '/logout.php', { credentials: 'include' });
-        window.location.href = 'login.html';
+        window.location.href = '../../login.php';
       });
 
       // ---- Init ----

@@ -50,6 +50,34 @@ if ($method === 'POST') {
         json_response(true, 'Event added.');
     }
 
+    if ($action === 'edit') {
+        $id          = (int) ($_POST['id'] ?? 0);
+        $title       = trim($_POST['title'] ?? '');
+        $event_date  = trim($_POST['event_date'] ?? '');
+        $location    = trim($_POST['location'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+
+        if ($id <= 0) {
+            json_response(false, 'Invalid event ID.');
+        }
+
+        if ($title === '' || $event_date === '') {
+            json_response(false, 'Title and date are required.');
+        }
+
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $event_date)) {
+            json_response(false, 'Invalid date format.');
+        }
+
+        $db   = get_db();
+        $stmt = $db->prepare(
+            'UPDATE events SET title=?, description=?, event_date=?, location=? WHERE id=?'
+        );
+        $stmt->execute([$title, $description, $event_date, $location, $id]);
+
+        json_response(true, 'Event updated.');
+    }
+
     if ($action === 'delete') {
         $id = (int) ($_POST['id'] ?? 0);
 

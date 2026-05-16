@@ -13,6 +13,6 @@ $is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
 if ($is_ajax || (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false)) {
     json_response(true, 'Logged out successfully.');
 } else {
-    header('Location: ../frontend/pages/login.html');
+    header('Location: ../login.php');
     exit;
 }
