@@ -222,8 +222,10 @@
 
           if (data.success) {
             showAlert('success', data.message);
+            const role = data.data && data.data.role;
+            const dest = role === 'manager' ? 'dashboard-manager.html' : 'dashboard-student.html';
             setTimeout(() => {
-              window.location.href = '../index.html';
+              window.location.href = dest;
             }, 800);
           } else {
             showAlert('error', data.message);

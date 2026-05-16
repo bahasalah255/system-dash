@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manager Dashboard</title>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        font-family: "Segoe UI", system-ui, sans-serif;
+        font-size: 14px;
+        color: #1a1a1a;
+        background: #f0f0ef;
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ---- Sidebar ---- */
+      .sidebar {
+        width: 210px;
+        background: #fff;
+        border-right: 1px solid #d4d4d4;
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 0; left: 0;
+        height: 100vh;
+        z-index: 10;
+      }
+
+      .sidebar-brand {
+        padding: 18px 16px 14px;
+        border-bottom: 1px solid #e8e8e8;
+      }
+
+      .sidebar-brand strong {
+        display: block;
+        font-size: 15px;
+        font-weight: 700;
+        color: #0f766e;
+        letter-spacing: -0.2px;
+      }
+
+      .sidebar-brand span {
+        font-size: 11.5px;
+        color: #888;
+        margin-top: 1px;
+        display: block;
+      }
+
+      .sidebar-nav {
+        flex: 1;
+        padding: 10px 0;
+      }
+
+      .nav-item {
+        display: block;
+        padding: 9px 16px;
+        font-size: 13.5px;
+        color: #444;
+        cursor: pointer;
+        border-left: 3px solid transparent;
+        user-select: none;
+        text-decoration: none;
+      }
+
+      .nav-item:hover { background: #f7f7f7; color: #1a1a1a; }
+
+      .nav-item.active {
+        border-left-color: #0f766e;
+        background: #f0fdf9;
+        color: #0f766e;
+        font-weight: 600;
+      }
+
+      .sidebar-bottom {
+        padding: 14px 16px;
+        border-top: 1px solid #e8e8e8;
+      }
+
+      .logged-in-as {
+        font-size: 12px;
+        color: #888;
+        margin-bottom: 8px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .btn-signout {
+        width: 100%;
+        padding: 7px 0;
+        background: #fff;
+        border: 1px solid #d4d4d4;
+        border-radius: 3px;
+        font-size: 13px;
+        color: #444;
+        cursor: pointer;
+      }
+
+      .btn-signout:hover { background: #fef2f2; border-color: #f9a8a8; color: #c0392b; }
+
+      /* ---- Main area ---- */
+      .main {
+        margin-left: 210px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      .topbar {
+        background: #fff;
+        border-bottom: 1px solid #d4d4d4;
+        padding: 13px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+      }
+
+      .topbar-left h2 {
+        font-size: 15px;
+        font-weight: 600;
+        color: #1a1a1a;
+      }
+
+      .topbar-right {
+        font-size: 12.5px;
+        color: #888;
+      }
+
+      .content {
+        padding: 24px;
+        flex: 1;
+      }
+
+      /* ---- Sections ---- */
+      .section { display: none; }
+      .section.active { display: block; }
+
+      /* ---- Stats row ---- */
+      .stats-row {
+        display: flex;
+        gap: 14px;
+        margin-bottom: 28px;
+      }
+
+      .stat-card {
+        background: #fff;
+        border: 1px solid #d4d4d4;
+        border-left: 3px solid #0f766e;
+        padding: 16px 20px;
+        min-width: 140px;
+      }
+
+      .stat-card .number {
+        font-size: 30px;
+        font-weight: 700;
+        color: #0f766e;
+        line-height: 1;
+      }
+
+      .stat-card .label {
+        font-size: 12px;
+        color: #777;
+        margin-top: 5px;
+      }
+
+      /* ---- Section heading ---- */
+      .section-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+
+      .section-heading h3 {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      /* ---- Tables ---- */
+      .table-wrap {
+        background: #fff;
+        border: 1px solid #d4d4d4;
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13.5px;
+      }
+
+      thead th {
+        background: #f7f7f7;
+        padding: 9px 14px;
+        text-align: left;
+        font-weight: 600;
+        color: #333;
+        border-bottom: 1px solid #d4d4d4;
+        white-space: nowrap;
+      }
+
+      tbody td {
+        padding: 9px 14px;
+        color: #333;
+        border-bottom: 1px solid #ebebeb;
+        vertical-align: middle;
+      }
+
+      tbody tr:last-child td { border-bottom: none; }
+      tbody tr:hover td { background: #fafafa; }
+
+      .empty-cell {
+        text-align: center;
+        color: #aaa;
+        padding: 28px 14px;
+        font-size: 13px;
+      }
+
+      /* ---- Buttons ---- */
+      .btn {
+        padding: 6px 14px;
+        border-radius: 3px;
+        font-size: 13px;
+        cursor: pointer;
+        border: 1px solid;
+        line-height: 1.4;
+      }
+
+      .btn-primary {
+        background: #0f766e;
+        color: #fff;
+        border-color: #0f766e;
+      }
+
+      .btn-primary:hover { background: #0e6b63; }
+
+      .btn-secondary {
+        background: #fff;
+        color: #444;
+        border-color: #d4d4d4;
+      }
+
+      .btn-secondary:hover { background: #f7f7f7; }
+
+      .btn-danger {
+        background: #fff;
+        color: #c0392b;
+        border-color: #f5b7b1;
+        padding: 4px 10px;
+        font-size: 12.5px;
+      }
+
+      .btn-danger:hover { background: #fef2f2; }
+
+      /* ---- Add event form panel ---- */
+      .form-panel {
+        background: #fff;
+        border: 1px solid #d4d4d4;
+        padding: 18px 20px;
+        margin-bottom: 16px;
+        display: none;
+      }
+
+      .form-panel.open { display: block; }
+
+      .form-panel h4 {
+        font-size: 13.5px;
+        font-weight: 600;
+        margin-bottom: 14px;
+        color: #333;
+      }
+
+      .form-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+      }
+
+      .form-field {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-width: 180px;
+      }
+
+      .form-field label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 4px;
+      }
+
+      .form-field input,
+      .form-field textarea {
+        padding: 7px 9px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        font-size: 13.5px;
+        font-family: inherit;
+        outline: none;
+        background: #fafafa;
+        color: #1a1a1a;
+      }
+
+      .form-field input:focus,
+      .form-field textarea:focus {
+        border-color: #0f766e;
+        background: #fff;
+      }
+
+      .form-field textarea {
+        resize: vertical;
+        min-height: 60px;
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 6px;
+      }
+
+      /* ---- Alert banners ---- */
+      .alert {
+        padding: 8px 12px;
+        border-radius: 3px;
+        font-size: 13px;
+        margin-bottom: 12px;
+        display: none;
+      }
+
+      .alert.error   { background: #fef2f2; border: 1px solid #f9a8a8; color: #c0392b; }
+      .alert.success { background: #f0fdf9; border: 1px solid #99e6d8; color: #0f766e; }
+
+      /* ---- Date badge ---- */
+      .date-text { color: #555; }
+    </style>
+  </head>
+  <body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <strong>System Dash</strong>
+        <span>Manager Panel</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a class="nav-item active" data-section="overview">Overview</a>
+        <a class="nav-item"        data-section="events">Events</a>
+        <a class="nav-item"        data-section="students">Students</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="logged-in-as" id="sidebar-user">...</div>
+        <button class="btn-signout" id="logout-btn">Sign out</button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h2 id="topbar-title">Overview</h2>
+        </div>
+        <div class="topbar-right" id="topbar-date"></div>
+      </div>
+
+      <div class="content">
+
+        <!-- Overview -->
+        <div class="section active" id="section-overview">
+          <div class="stats-row">
+            <div class="stat-card">
+              <div class="number" id="stat-events">-</div>
+              <div class="label">Total Events</div>
+            </div>
+            <div class="stat-card">
+              <div class="number" id="stat-students">-</div>
+              <div class="label">Registered Students</div>
+            </div>
+          </div>
+
+          <div class="section-heading">
+            <h3>Upcoming Events</h3>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Date</th>
+                  <th>Location</th>
+                </tr>
+              </thead>
+              <tbody id="overview-tbody">
+                <tr><td class="empty-cell" colspan="3">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Events -->
+        <div class="section" id="section-events">
+          <div class="alert error"   id="ev-error"></div>
+          <div class="alert success" id="ev-success"></div>
+
+          <div class="section-heading">
+            <h3>All Events</h3>
+            <button class="btn btn-primary" id="toggle-form-btn">Add Event</button>
+          </div>
+
+          <div class="form-panel" id="add-form">
+            <h4>New Event</h4>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="ev-title">Title</label>
+                <input type="text" id="ev-title" placeholder="Event title" />
+              </div>
+              <div class="form-field">
+                <label for="ev-date">Date</label>
+                <input type="date" id="ev-date" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="ev-location">Location</label>
+                <input type="text" id="ev-location" placeholder="Room / Building" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="ev-desc">Description</label>
+                <textarea id="ev-desc" placeholder="Optional"></textarea>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-primary" id="save-ev-btn">Save Event</button>
+              <button class="btn btn-secondary" id="cancel-form-btn">Cancel</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Date</th>
+                  <th>Location</th>
+                  <th style="width: 80px;"></th>
+                </tr>
+              </thead>
+              <tbody id="events-tbody">
+                <tr><td class="empty-cell" colspan="4">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Students -->
+        <div class="section" id="section-students">
+          <div class="section-heading">
+            <h3>Registered Students</h3>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Joined</th>
+                </tr>
+              </thead>
+              <tbody id="students-tbody">
+                <tr><td class="empty-cell" colspan="3">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- /content -->
+    </div><!-- /main -->
+
+    <script>
+      const BASE = '../../backend';
+
+      // ---- Helpers ----
+
+      async function get(path) {
+        const res = await fetch(BASE + path, { credentials: 'include' });
+        return res.json();
+      }
+
+      async function post(path, data) {
+        const body = new FormData();
+        Object.entries(data).forEach(([k, v]) => body.append(k, v));
+        const res = await fetch(BASE + path, { method: 'POST', body, credentials: 'include' });
+        return res.json();
+      }
+
+      function fmtDate(str) {
+        if (!str) return '-';
+        const d = new Date(str + 'T00:00:00');
+        return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      }
+
+      function td(text) {
+        const el = document.createElement('td');
+        el.textContent = text || '-';
+        return el;
+      }
+
+      function emptyRow(cols, msg) {
+        const tr = document.createElement('tr');
+        const cell = document.createElement('td');
+        cell.colSpan = cols;
+        cell.className = 'empty-cell';
+        cell.textContent = msg;
+        tr.appendChild(cell);
+        return tr;
+      }
+
+      // ---- Auth check ----
+
+      async function checkAuth() {
+        try {
+          const data = await get('/me.php');
+          if (!data.success || data.data.role !== 'manager') {
+            window.location.href = 'login.html';
+            return null;
+          }
+          return data.data;
+        } catch {
+          window.location.href = 'login.html';
+          return null;
+        }
+      }
+
+      // ---- Navigation ----
+
+      const sectionTitles = { overview: 'Overview', events: 'Events', students: 'Students' };
+      let currentSection = 'overview';
+
+      function showSection(name) {
+        document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+        document.getElementById('section-' + name).classList.add('active');
+        document.querySelector('[data-section="' + name + '"]').classList.add('active');
+        document.getElementById('topbar-title').textContent = sectionTitles[name];
+        currentSection = name;
+
+        if (name === 'overview') loadOverview();
+        if (name === 'events')   loadEvents();
+        if (name === 'students') loadStudents();
+      }
+
+      document.querySelectorAll('.nav-item').forEach(el => {
+        el.addEventListener('click', () => showSection(el.dataset.section));
+      });
+
+      // ---- Overview ----
+
+      async function loadOverview() {
+        const [statsData, eventsData] = await Promise.all([
+          get('/stats.php'),
+          get('/events.php'),
+        ]);
+
+        if (statsData.success) {
+          document.getElementById('stat-events').textContent   = statsData.data.events;
+          document.getElementById('stat-students').textContent = statsData.data.students;
+        }
+
+        const tbody = document.getElementById('overview-tbody');
+        tbody.innerHTML = '';
+
+        if (!eventsData.success || !eventsData.data.events.length) {
+          tbody.appendChild(emptyRow(3, 'No events yet.'));
+          return;
+        }
+
+        const today = new Date().toISOString().slice(0, 10);
+        const upcoming = eventsData.data.events
+          .filter(e => e.event_date >= today)
+          .slice(0, 10);
+
+        if (!upcoming.length) {
+          tbody.appendChild(emptyRow(3, 'No upcoming events.'));
+          return;
+        }
+
+        upcoming.forEach(ev => {
+          const tr = document.createElement('tr');
+          tr.appendChild(td(ev.title));
+          tr.appendChild(td(fmtDate(ev.event_date)));
+          tr.appendChild(td(ev.location));
+          tbody.appendChild(tr);
+        });
+      }
+
+      // ---- Events ----
+
+      async function loadEvents() {
+        const data = await get('/events.php');
+        const tbody = document.getElementById('events-tbody');
+        tbody.innerHTML = '';
+
+        if (!data.success || !data.data.events.length) {
+          tbody.appendChild(emptyRow(4, 'No events found.'));
+          return;
+        }
+
+        data.data.events.forEach(ev => {
+          const tr = document.createElement('tr');
+          tr.appendChild(td(ev.title));
+          tr.appendChild(td(fmtDate(ev.event_date)));
+          tr.appendChild(td(ev.location));
+
+          const actionTd = document.createElement('td');
+          const delBtn = document.createElement('button');
+          delBtn.className = 'btn btn-danger';
+          delBtn.textContent = 'Delete';
+          delBtn.addEventListener('click', () => deleteEvent(ev.id));
+          actionTd.appendChild(delBtn);
+          tr.appendChild(actionTd);
+
+          tbody.appendChild(tr);
+        });
+      }
+
+      function showEvAlert(type, msg) {
+        const err = document.getElementById('ev-error');
+        const ok  = document.getElementById('ev-success');
+        err.style.display = 'none';
+        ok.style.display  = 'none';
+        if (type === 'error')   { err.textContent = msg; err.style.display = 'block'; }
+        if (type === 'success') { ok.textContent  = msg; ok.style.display  = 'block'; }
+        setTimeout(() => { err.style.display = 'none'; ok.style.display = 'none'; }, 3500);
+      }
+
+      document.getElementById('toggle-form-btn').addEventListener('click', () => {
+        const panel = document.getElementById('add-form');
+        panel.classList.toggle('open');
+        document.getElementById('toggle-form-btn').textContent =
+          panel.classList.contains('open') ? 'Cancel' : 'Add Event';
+      });
+
+      document.getElementById('cancel-form-btn').addEventListener('click', () => {
+        document.getElementById('add-form').classList.remove('open');
+        document.getElementById('toggle-form-btn').textContent = 'Add Event';
+      });
+
+      document.getElementById('save-ev-btn').addEventListener('click', async () => {
+        const title    = document.getElementById('ev-title').value.trim();
+        const date     = document.getElementById('ev-date').value;
+        const location = document.getElementById('ev-location').value.trim();
+        const desc     = document.getElementById('ev-desc').value.trim();
+
+        if (!title || !date) {
+          showEvAlert('error', 'Title and date are required.');
+          return;
+        }
+
+        const btn = document.getElementById('save-ev-btn');
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+
+        const data = await post('/events.php', { action: 'add', title, event_date: date, location, description: desc });
+
+        btn.disabled = false;
+        btn.textContent = 'Save Event';
+
+        if (data.success) {
+          document.getElementById('ev-title').value    = '';
+          document.getElementById('ev-date').value     = '';
+          document.getElementById('ev-location').value = '';
+          document.getElementById('ev-desc').value     = '';
+          document.getElementById('add-form').classList.remove('open');
+          document.getElementById('toggle-form-btn').textContent = 'Add Event';
+          showEvAlert('success', 'Event added.');
+          loadEvents();
+        } else {
+          showEvAlert('error', data.message);
+        }
+      });
+
+      async function deleteEvent(id) {
+        if (!confirm('Delete this event?')) return;
+        const data = await post('/events.php', { action: 'delete', id });
+        if (data.success) {
+          showEvAlert('success', 'Event deleted.');
+          loadEvents();
+        } else {
+          showEvAlert('error', data.message);
+        }
+      }
+
+      // ---- Students ----
+
+      async function loadStudents() {
+        const data = await get('/users.php');
+        const tbody = document.getElementById('students-tbody');
+        tbody.innerHTML = '';
+
+        if (!data.success || !data.data.users.length) {
+          tbody.appendChild(emptyRow(3, 'No students registered yet.'));
+          return;
+        }
+
+        data.data.users.forEach(u => {
+          const tr = document.createElement('tr');
+          tr.appendChild(td(u.full_name));
+          tr.appendChild(td(u.email));
+          tr.appendChild(td(fmtDate(u.created_at ? u.created_at.slice(0, 10) : '')));
+          tbody.appendChild(tr);
+        });
+      }
+
+      // ---- Logout ----
+
+      document.getElementById('logout-btn').addEventListener('click', async () => {
+        await fetch(BASE + '/logout.php', { credentials: 'include' });
+        window.location.href = 'login.html';
+      });
+
+      // ---- Init ----
+
+      (async () => {
+        const user = await checkAuth();
+        if (!user) return;
+
+        document.getElementById('sidebar-user').textContent = user.name;
+
+        const now = new Date();
+        document.getElementById('topbar-date').textContent =
+          now.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
+
+        loadOverview();
+      })();
+    </script>
+  </body>
+</html>
