@@ -3,7 +3,7 @@
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'academic_events');
 define('DB_USER', 'root');
-define('DB_PASS', 'salah123');
+define('DB_PASS', 'raja1949');
 define('DB_CHARSET', 'utf8mb4');
 
 function get_db() {
@@ -27,6 +27,46 @@ function get_db() {
 
     return $pdo;
 }
+
+// ---- Session setup (ensure consistent session storage and cookie params) ----
+// Determine a writable session save path and set it so all scripts use the same location.
+$currentSave = ini_get('session.save_path');
+if ($currentSave) {
+    if (strpos($currentSave, ';') !== false) {
+        $parts = explode(';', $currentSave);
+        $currentSave = end($parts);
+    }
+}
+$currentSave = $currentSave ?: sys_get_temp_dir();
+if (!is_dir($currentSave) || !is_writable($currentSave)) {
+    $alt = sys_get_temp_dir();
+    if (is_dir($alt) && is_writable($alt)) {
+        session_save_path($alt);
+    } else {
+        $localTmp = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'tmp';
+        if (!is_dir($localTmp)) {
+            @mkdir($localTmp, 0777, true);
+        }
+        if (is_dir($localTmp) && is_writable($localTmp)) {
+            session_save_path($localTmp);
+        }
+    }
+}
+
+// Configure session cookie params so cookies are consistent on localhost
+if (defined('PHP_VERSION_ID') && PHP_VERSION_ID >= 70300) {
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path'     => '/',
+        'domain'   => '',
+        'secure'   => false,
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
+} else {
+    session_set_cookie_params(0, '/; samesite=Lax', '', false, true);
+}
+
 
 function json_response($success, $message, $data = []) {
     header('Content-Type: application/json');
